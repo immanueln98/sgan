@@ -1,0 +1,62 @@
+# Resume from benchmark_zara1_with_model.pt.
+#
+# Model ctor args are pulled from the checkpoint's 'args' dict at load time
+# (so they always match the saved state_dict shapes). Fields below set the
+# *training* schedule going forward — e.g. push num_epochs > 800 or change
+# d_safe / resist_loss_weight to fine-tune the safety behaviour.
+
+dataset_name: zara1
+delim: tab
+obs_len: 8
+pred_len: 12
+skip: 1
+loader_num_workers: 4
+
+batch_size: 32
+num_epochs: 1200          # extend past original 800
+num_iterations: 50000
+
+g_learning_rate: 0.005
+d_learning_rate: 0.001
+d_steps: 2
+g_steps: 1
+clipping_threshold_g: 1.5
+clipping_threshold_d: 0
+
+# Model fields below are IGNORED during resume — overridden by checkpoint['args'].
+# Listed only so the file is a complete description if you fork it.
+embedding_dim: 16
+encoder_h_dim: 32
+decoder_h_dim: 32
+mlp_dim: 64
+bottleneck_dim: 32
+num_layers: 1
+dropout: 0.0
+batch_norm: false
+noise_dim: [0]
+noise_type: gaussian
+noise_mix_type: ped
+pooling_type: spool
+pool_every_timestep: false
+neighborhood_size: 2.0
+grid_size: 8
+goal_dim: [2]
+spatial_dim: true
+goal_aggr: 0.5
+d_type: local
+
+l2_loss_weight: 1.0
+gan_loss_weight: 1.0
+intention_loss_weight: 0.05
+resist_loss_weight: 1.0
+d_safe: 0.5
+
+print_every: 50
+checkpoint_every: 500
+num_samples_check: 5000
+
+resume_from: models/benchmark_zara1_with_model.pt
+output_dir: runs/zara1_resume
+checkpoint_name: navigan_checkpoint
+
+seed: 42

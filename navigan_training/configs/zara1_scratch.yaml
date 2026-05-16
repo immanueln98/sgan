@@ -1,0 +1,71 @@
+# From-scratch training on zara1. Matches benchmark_zara1_with_model.pt args
+# except where noted, so a model trained with this config is shape-compatible
+# for resume against the original checkpoint.
+
+# Dataset
+dataset_name: zara1
+delim: tab
+obs_len: 8
+pred_len: 12
+skip: 1
+loader_num_workers: 4
+
+# Optim
+batch_size: 32
+num_epochs: 800
+num_iterations: 30000   # overridden by num_epochs * iters/epoch at runtime
+g_learning_rate: 0.005
+d_learning_rate: 0.001
+d_steps: 2
+g_steps: 1
+clipping_threshold_g: 1.5
+clipping_threshold_d: 0
+
+# Model
+embedding_dim: 16
+encoder_h_dim: 32
+decoder_h_dim: 32
+mlp_dim: 64
+bottleneck_dim: 32
+num_layers: 1
+dropout: 0.0
+batch_norm: false
+
+# Noise (deterministic — matches checkpoint)
+noise_dim: [0]
+noise_type: gaussian
+noise_mix_type: ped
+
+# Pooling — SocialPooling once at encoder
+pooling_type: spool
+pool_every_timestep: false
+neighborhood_size: 2.0
+grid_size: 8
+
+# Goal / spatial
+goal_dim: [2]
+spatial_dim: true
+goal_aggr: 0.5
+
+# Discriminator
+d_type: local
+
+# Losses
+l2_loss_weight: 1.0
+gan_loss_weight: 1.0
+intention_loss_weight: 0.05
+resist_loss_weight: 1.0
+d_safe: 0.5   # metres — pairwise separation hinge threshold
+
+# Logging
+print_every: 50
+checkpoint_every: 500   # less chatty than checkpoint's 10
+num_samples_check: 5000
+
+# Resume / output
+resume_from: null
+output_dir: runs/zara1_scratch
+checkpoint_name: navigan_checkpoint
+
+# Misc
+seed: 42

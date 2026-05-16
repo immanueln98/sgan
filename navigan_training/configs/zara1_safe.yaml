@@ -1,0 +1,63 @@
+# Safer variant — pushes the resist loss harder for wider pedestrian clearance.
+# Same architecture as zara1_scratch (so it remains resume-compatible with
+# benchmark_zara1_with_model.pt) but trades a bit of ADE/FDE for fewer
+# safety-zone violations.
+#
+# Two tunable levers compose:
+#   d_safe              — distance threshold below which the hinge activates
+#   resist_loss_weight  — multiplier on the hinge loss term
+#
+# Try grid: d_safe in {0.6, 0.8, 1.0}, weight in {2.0, 5.0, 10.0}.
+
+dataset_name: zara1
+delim: tab
+obs_len: 8
+pred_len: 12
+skip: 1
+loader_num_workers: 4
+
+batch_size: 32
+num_epochs: 800
+num_iterations: 30000
+g_learning_rate: 0.005
+d_learning_rate: 0.001
+d_steps: 2
+g_steps: 1
+clipping_threshold_g: 1.5
+clipping_threshold_d: 0
+
+embedding_dim: 16
+encoder_h_dim: 32
+decoder_h_dim: 32
+mlp_dim: 64
+bottleneck_dim: 32
+num_layers: 1
+dropout: 0.0
+batch_norm: false
+noise_dim: [0]
+noise_type: gaussian
+noise_mix_type: ped
+pooling_type: spool
+pool_every_timestep: false
+neighborhood_size: 2.0
+grid_size: 8
+goal_dim: [2]
+spatial_dim: true
+goal_aggr: 0.5
+d_type: local
+
+l2_loss_weight: 1.0
+gan_loss_weight: 1.0
+intention_loss_weight: 0.05
+resist_loss_weight: 5.0   # 5x baseline
+d_safe: 0.8               # wider clearance (vs 0.5 baseline)
+
+print_every: 50
+checkpoint_every: 500
+num_samples_check: 5000
+
+resume_from: null
+output_dir: runs/zara1_safe
+checkpoint_name: navigan_checkpoint
+
+seed: 42

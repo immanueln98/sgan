@@ -1,0 +1,28 @@
+# Datasets (fetched via scripts/download_data.sh)
+datasets/
+
+# Trained weights / checkpoints
+*.pt
+*.pth
+models/
+
+# Run outputs
+runs/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.eggs/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Slurm scratch
+slurm-*.out
+slurm-*.err
