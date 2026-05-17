@@ -2,9 +2,7 @@
 datasets/
 
 # Trained weights / checkpoints
-*.pt
-*.pth
-models/
+
 
 # Run outputs
 runs/
