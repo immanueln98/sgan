@@ -1,0 +1,82 @@
+# From-scratch training on zara1 with SocialCircle pooling instead of SocialPooling.
+#
+# Identical to zara1_scratch.yaml except `pooling_type` and `circle_partitions`.
+# Apples-to-apples comparison with the production benchmark checkpoint
+# (`benchmark_zara1_with_model.pt`) — same data, same horizons, same losses,
+# same optim — so any delta on ADE/FDE/resist_count is attributable to the
+# social-encoder swap (PoolHiddenNet/SocialPooling -> SocialCircle).
+#
+# NOT resume-compatible with the production checkpoint: the SocialCircle MLP
+# head has a different parameter shape. Train from scratch only.
+
+# Dataset
+dataset_name: zara1
+delim: tab
+obs_len: 8
+pred_len: 12
+skip: 1
+loader_num_workers: 4
+
+# Optim
+batch_size: 32
+num_epochs: 800
+num_iterations: 30000
+g_learning_rate: 0.005
+d_learning_rate: 0.001
+d_steps: 2
+g_steps: 1
+clipping_threshold_g: 1.5
+clipping_threshold_d: 0
+
+# Model
+embedding_dim: 16
+encoder_h_dim: 32
+decoder_h_dim: 32
+mlp_dim: 64
+bottleneck_dim: 32
+num_layers: 1
+dropout: 0.0
+batch_norm: false
+
+# Noise (deterministic — matches benchmark checkpoint)
+noise_dim: [0]
+noise_type: gaussian
+noise_mix_type: ped
+
+# Pooling — SocialCircle (angular-sector encoder, Wong et al. CVPR 2024)
+pooling_type: social_circle
+circle_partitions: 8
+pool_every_timestep: false
+
+# Carried for compatibility with constructor signature; unused when
+# pooling_type=social_circle but the AttrDict pipeline still passes them.
+neighborhood_size: 2.0
+grid_size: 8
+
+# Goal / spatial
+goal_dim: [2]
+spatial_dim: true
+goal_aggr: 0.5
+
+# Discriminator
+d_type: local
+
+# Losses
+l2_loss_weight: 1.0
+gan_loss_weight: 1.0
+intention_loss_weight: 0.05
+resist_loss_weight: 1.0
+d_safe: 0.5
+
+# Logging
+print_every: 50
+checkpoint_every: 500
+num_samples_check: 5000
+
+# Resume / output
+resume_from: null
+output_dir: runs/zara1_socialcircle
+checkpoint_name: navigan_checkpoint
+
+# Misc
+seed: 42
